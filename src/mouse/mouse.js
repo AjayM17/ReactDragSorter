@@ -6,13 +6,18 @@ class Mouse extends Component {
         super()
         this.dragImg = null
         this.pointerPosition=0
+        this.placeHolderRef =React.createRef;
         this.pointerMovement  = 0
+        this.placeHolderClientHeight =1
         this.state = {
             dragIndex: -1,
             dropIndex: -1,
+            placeHolder:-1,
             topPostion: 0,
+           
             isDraggig: false,
             readyForDrag: false,
+            dragItemValue:null,
             list: [
                 {
                     id: 1,
@@ -65,118 +70,35 @@ class Mouse extends Component {
             'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
     }
 
-    swapList2(dropPageY) {
-      
-      //  console.log('ciel'+Math.round(dropPageY/32))
+    swapList(index) {
         if (this.state.isDraggig && this.state.readyForDrag) {
-
-          let index = -1
-           if(this.pointerMovement<0) {
-            console.log('---UP')
-           
-              index = Math.floor(dropPageY / 34)    
-               console.log('----------dropPageY / 34------'+ dropPageY / 34)
-               console.log('-------Math.floor(dropPageY / 34)-----' + Math.floor(dropPageY / 34))
-           }else{
-               console.log('---DOWN')
-
-               index = Math.ceil(dropPageY / 34) - 1
-            console.log('----------dropPageY / 34------'+ dropPageY / 34)
-            console.log('-------Math.ceil(dropPageY / 34)-----' + Math.ceil(dropPageY / 34))
-
-
-
-            
-           }
-
-            if (index > 7) {
-                index = 7
-            }
-            if (index < 0) {
-                index = 0
-            }
-            this.setState({
-                dragIndex: index
-            })
-         console.log('----index-----' +index)
-           
             let tempList = this.state.list;
+            console.log('-----dragIndex----'+this.state.dragIndex)
+            console.log('---dropIndex--'+index)
             const tempValue = tempList[this.state.dragIndex]
             tempList[this.state.dragIndex] = tempList[index]
             tempList[index] = tempValue
+            this.setState({
+                dragIndex:index
+            })
         }
-
-
-
-    }
-    swapList() {
-     
-        this.setState({
-            isDraggig: false,
-            readyForDrag: false,
-            dragIndex: -1,
-            //  list: tempList
-        })
-      
-        // this.setState({
-        //     isDraggig: false,
-        //     readyForDrag: false,
-        //     dragIndex: -1
-        //     //  list: tempList
-        // })
-        // let index = Math.round(dropPageY / 36) - 1
-        // console.log(index)
-        // if (index > 7) {
-        //     index = 7
-        // }
-        // if (index < 0) {
-        //     index = 0
-        // }
-        // let tempList = this.state.list;
-        // const tempValue = tempList[this.state.dragIndex]
-        // tempList[this.state.dragIndex] = tempList[index]
-        // tempList[index] = tempValue
-
     }
 
     render() {
         return (
-            <div onMouseLeave={(event) => {
-             
-                this.setState({
-                    isDraggig: false,
-                    readyForDrag: false
-                })
-            }}>
+            <div>
                 <ul className={'list-group'}
-
-                    onMouseLeave={(event) => {
-                     
-                        this.setState({
-                            isDraggig: false,
-                            readyForDrag: false
-                        })
-                    }}>
+>
                     {(this.state.dragIndex != -1  && this.state.isDraggig)? (
 
                         <li
+                        ref={ this.placeHolderRef }
 
                             className={((this.state.isDraggig) ? 'dragGhost' : null)}
-                            style={{ top: this.pointerPosition}}
-                            onMouseMove={(event) => {
-                             
-                               console.log(event.screenY)
-                               console.log(event.pageY)
-                            
-                            
-                               this.pointerPosition = event.pageY
-                               this.pointerMovement = event.movementY
-                               this.swapList2(event.pageY)
-                              
-                            }}
+                            style={{ top:( this.pointerPosition - 28 ),pointerEvents:"none"}}
                         >
 
-                            {this.state.list[this.state.dragIndex]['value']}
+                            {this.state.dragItemValue }
                         </li>
 
                     ) : null}
@@ -187,18 +109,27 @@ class Mouse extends Component {
                             <li draggable={false}
                             
                                 className={'list-item ' + (this.state.dragIndex == index ? 'tobeDrag' : 'notDrag')}
-                             //   style={ { backgroundColor: ((this.state.dragIndex == index) ? 'transparent' : '') , minHeight: '36px' }}
+                    
                                 onMouseDown={(event) => {
-                                    this.pointerPosition = event.pageY
                                     this.setState({
-                                        topPostion: event.pageY,
+                                        dragItemValue:this.state.list[index]['value'],
                                         dragIndex: index,
                                         readyForDrag: true
 
                                     })
                                 }}
+
+                                onMouseMove={(event) => {
+                                    if (this.state.readyForDrag) {
+                                        this.pointerPosition = event.pageY
+                                        this.setState({
+                                            isDraggig: true,
+                                        })
+                                    }
+                                }}
+
                                 onMouseUp={(event) => {
-                                      this.swapList()
+                                   //   this.swapList()
                                     this.setState({
                                         isDraggig: false,
                                         readyForDrag: false
@@ -206,26 +137,20 @@ class Mouse extends Component {
 
                                 }}
 
-
-                                onMouseMove={(event) => {
-
-
-                                  
-                                  
-
-                                    if (this.state.readyForDrag) {
-                                      
-                                        this.pointerPosition = event.pageY
-                                        this.setState({
-                                            isDraggig: true,
-                                            topPostion:( event.pageY ),
-                                        })
-                                  //      this.swapList2(index)
-                                    }
+                                onMouseOver={() => {
+                                  //  console.log(index)
+                                    this.setState({
+                                        placeHolder:index
+                                    })
+                                    this.swapList(index)
                                 }}
+
+
+                              
+                                
                             >
                                
-                                {(this.state.dragIndex == index && this.state.isDraggig) ? ('') : data.value}
+                                {(this.state.placeHolder == index && this.state.isDraggig) ? ('') : data.value}
                                
                             </li>
                         ))
@@ -239,215 +164,3 @@ class Mouse extends Component {
 
 export default Mouse;
 
-
-
-
-// import React, { Component } from 'react'
-// import './mouse.css';
-
-// class Mouse extends Component {
-//     constructor() {
-//         super()
-//         this.dragImg = null
-//         this.liRef = React.createRef()
-//         this.liRefs = []
-//         this.state = {
-//             dragIndex: -1,
-//             dropIndex: -1,
-//             topPostion: 0,
-//             isDraggig: false,
-//             readyForDrag: false,
-//             bound:[],
-//             list: [
-//                 {
-//                     id: 1,
-//                     value: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
-//                     isDraggig: false
-//                 },
-//                 {
-//                     id: 2,
-//                     value: 'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
-//                     isDraggig: false
-//                 },
-//                 {
-//                     id: 3,
-//                     value: 'CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC',
-//                     isDraggig: false
-//                 },
-//                 {
-//                     id: 4,
-//                     value: 'DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD',
-//                     isDraggig: false
-//                 },
-//                 {
-//                     id: 5,
-//                     value: 'EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE',
-//                     isDraggig: false
-//                 },
-//                 {
-//                     id: 6,
-//                     value: 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF',
-//                     isDraggig: false
-//                 },
-//                 {
-//                     id: 7,
-//                     value: 'GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG',
-//                     isDraggig: false
-//                 },
-//                 {
-//                     id: 8,
-//                     value: 'HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH',
-//                     isDraggig: false
-//                 },
-//             ]
-//         }
-//     }
-
-//     componentDidMount() {
-//         //  React.in
-//         this.dragImg = new Image(0, 0);
-//         this.dragImg.src =
-//             'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-//     }
-
-//     swapList2(index){
-//         if(this.state.isDraggig && this.state.readyForDrag){
-//           console.log(index)
-//             // let index = Math.round(dropPageY / 32) - 1
-          
-//             // if(index > 7) {
-//             //     index = 7
-//             // } 
-//             // if(index < 0) {
-//             //     index =0
-//             // }
-//             // this.setState({
-//             //     dragIndex:index
-//             // })
-//             // console.log(index)
-//             // console.log(this.state.dragIndex)
-//             let tempList = this.state.list;
-//             const tempValue = tempList[this.state.dragIndex]
-//             tempList[this.state.dragIndex] = tempList[index]
-//             tempList[index] = tempValue
-//         }
-        
-        
-
-//     }
-//     swapList(dropPageY) {
-//         console.log('---swap---')
-//         this.setState({
-//             isDraggig:false,
-//             readyForDrag:false,
-//             dragIndex:-1
-//           //  list: tempList
-//         })
-//          let index = Math.round(dropPageY / 34) - 1
-//          console.log(index)
-//          if(index > 7) {
-//              index = 7
-//          } 
-//          if(index < 0) {
-//              index =0
-//          }
-//         let tempList = this.state.list;
-//         const tempValue = tempList[this.state.dragIndex]
-//         tempList[this.state.dragIndex] = tempList[index]
-//         tempList[index] = tempValue
-      
-//     }
-
-//     render() {
-//         let temp = []
-//         return (
-//             <div onMouseLeave={(event)=> {
-//                 console.log('leave')
-//                this.setState({
-//                    isDraggig:false,
-//                    readyForDrag:false
-//                })
-//             }}>
-//                 <ul className={'list-group'}  
-                
-//                 onMouseLeave={(event)=> {
-//                     console.log('leave')
-//                    this.setState({
-//                        isDraggig:false,
-//                        readyForDrag:false
-//                    })
-//                 }}>
-//                     {
-//                         this.state.list.map((data, index) => (
-//                             <li draggable={false}
-//                               className="list-item " 
-//                               ref = {el => {
-
-//                                console.log(el)
-//                             // console.log(el.getBoundingClientRect())
-                               
-//                               }}
-//                            onMouseDown={(event) => {
-//                                console.log( index + '------ onMouseDown -----')
-//                                this.setState({
-//                                 topPostion: event.pageY,
-//                                    dragIndex:index,
-//                                    readyForDrag:true
-                                 
-//                                })
-
-                               
-//                            }}
-                         
-//                            onMouseUp={(event) => {
-//                              //  this.swapList(event.pageY)
-//                             this.setState({
-//                                 isDraggig:false,
-//                                 readyForDrag:false
-//                             })
-                          
-//                         }}
-                        
-
-//                         onMouseMove={(event) => {
-                          
-//                           if(this.state.readyForDrag) {
-//                             //  console.log(temp[index])
-//                             //  console.log(event.getBo)
-//                               this.setState({
-//                                   isDraggig:true,
-                               
-//                                topPostion: event.pageY,
-                              
-//                               })
-//                               this.swapList2(index)
-//                           }
-//                         }}
-//                            >
-
-                               
-//                                <span
-                               
-                               
-                               
-//                                className={ ((this.state.dragIndex == index && this.state.isDraggig) ? 'dragGhost' : null)}
-//                                style={{top:this.state.topPostion}}
-//                                >
-
-
-// {data.value}
-
-
-//                                </span>
-                             
-//                             </li>
-//                         ))
-//                     }
-
-//                 </ul>
-//             </div>
-//         )
-//     }
-// }
-
-// export default Mouse;

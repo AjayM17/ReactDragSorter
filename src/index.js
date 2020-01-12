@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Mouse from './mouse/mouse'
+ import Mouse from './mouse/mouse'
+//import Mouse from './Method1/method1'
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<Mouse />, document.getElementById('root'));

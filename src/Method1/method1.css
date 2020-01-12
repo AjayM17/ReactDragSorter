@@ -1,16 +1,16 @@
 .list-group{
     background: #eee;
     list-style: none;
- position: relative;
+    padding: 0;
+    position: relative;
+ 
     user-select: none;
 }
 
 .list-item{
   height: 34px;
-    position: relative;
+
     background: #b9a7a7; 
-    margin: 5px;
-    padding: 5px;
 }
 
 
@@ -18,8 +18,6 @@
 .dragGhost {
 position: absolute;
 background:  #b9a7a7;;
-margin: 5px;
-padding: 5px;
 width: 100%;
 height: 34px;
 z-index: 9999;
