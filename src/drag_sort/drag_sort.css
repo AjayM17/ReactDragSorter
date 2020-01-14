@@ -1,0 +1,41 @@
+.drag-list-group{
+    list-style: none;
+    user-select: none;
+    padding: 5px;
+    width: 300px;
+    position: relative;
+}
+
+.drag-list-group .list-item{
+  min-height: 34px;
+  background: #eee;
+  border: 1px solid #ccc;
+  padding: 5px;
+  margin: 5px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+}
+
+.drag-list-group .list-item.drag_item{
+  background: transparent;
+}
+
+
+.drag-list-group .dragGhost {
+position: absolute;
+display: flex;
+padding: 5px;
+justify-content: center;
+align-content: center;
+background:  #eee;
+/* border: 2px solid #ccc; */
+align-items: center;
+pointer-events: none;
+width:inherit;
+
+min-height: 34px;
+z-index: 9999;
+box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+
+}
